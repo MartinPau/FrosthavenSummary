@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frosthaven Summary Companion</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --primary-hover: #357ABD;
+            --bg: #0F172A;
+            --surface: #1E293B;
+            --surface-hover: #334155;
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent: #38BDF8;
+            --border: #334155;
+            --radius: 12px;
+            --font: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-image: radial-gradient(circle at top, #1E293B 0%, #0F172A 100%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #38BDF8, #E0F2FE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: var(--font);
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: var(--font);
+            transition: all 0.2s ease;
+        }
+
+        .settings-group {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .output-group {
+            margin-top: 2rem;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .output-group.visible {
+            display: block;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .story-group {
+            margin-top: 2rem;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .story-group.visible {
+            display: block;
+        }
+
+        .story-text {
+            color: var(--text);
+            font-size: 1rem;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        audio {
+            border-radius: 8px;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background-color: var(--surface);
+        }
+
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: var(--text);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10B981;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .error {
+            color: #EF4444;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Frosthaven Summary</h1>
+        <p class="subtitle">Generate AI prompts summarizing your completed scenarios.</p>
+
+        <div class="settings-group">
+            <label for="api-key" style="display: block; margin-bottom: 0.5rem;">Gemini API Key (Saved locally in
+                browser)</label>
+            <input type="password" id="api-key" placeholder="Enter your Gemini API Key">
+        </div>
+
+        <div class="input-group">
+            <label for="scenarios">Enter completed Scenario IDs (comma separated)</label>
+            <input type="text" id="scenarios" placeholder="e.g. 1, 2, 83, 117">
+            <div id="error-msg" class="error"></div>
+            <button id="generate-btn">Generate AI Prompt</button>
+        </div>
+
+        <div class="output-group" id="output-group">
+            <div class="output-header">
+                <label for="prompt-output">Generated Prompt</label>
+                <div>
+                    <button id="synthesize-btn"
+                        style="width: auto; padding: 0.5rem 1rem; background: var(--accent); color: var(--bg); border: none; margin-right: 0.5rem;">Synthesize
+                        & Narrate</button>
+                    <button id="copy-btn"
+                        style="width: auto; padding: 0.5rem 1rem; background: var(--surface-hover); border: 1px solid var(--border);">Copy</button>
+                </div>
+            </div>
+            <textarea id="prompt-output" readonly></textarea>
+        </div>
+
+        <div class="story-group" id="story-group">
+            <div class="output-header">
+                <label>Synthesized Story & Narration</label>
+            </div>
+            <div id="loading"
+                style="display:none; color: var(--accent); margin-bottom: 1rem; text-align: center; font-weight: 600;">
+                Synthesizing via Gemini... Please wait. This may take 15-30 seconds.</div>
+            <audio id="audio-player" controls style="width: 100%; margin-bottom: 1.5rem; display: none;"></audio>
+            <div id="story-output" class="story-text"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        let db = null;
+
+        // Load API key
+        if (localStorage.getItem('gemini_api_key')) {
+            document.getElementById('api-key').value = localStorage.getItem('gemini_api_key');
+        }
+        document.getElementById('api-key').addEventListener('input', (e) => {
+            localStorage.setItem('gemini_api_key', e.target.value);
+        });
+
+        // Load database initially
+        fetch('frosthaven_data.json?v=' + new Date().getTime())
+            .then(res => res.json())
+            .then(data => {
+                db = data;
+            })
+            .catch(err => {
+                console.error("Failed to load database:", err);
+                document.getElementById('error-msg').innerText = "Failed to load frosthaven_data.json. Please ensure it has been generated and is in the same directory.";
+                document.getElementById('error-msg').style.display = 'block';
+            });
+
+        document.getElementById('generate-btn').addEventListener('click', () => {
+            if (!db) {
+                return;
+            }
+            const input = document.getElementById('scenarios').value;
+            const ids = input.split(',').map(s => s.trim()).filter(s => s !== '');
+
+            if (ids.length === 0) {
+                showError("Please enter at least one scenario ID.");
+                return;
+            }
+
+            hideError();
+
+            let prompt = "Please act as a storyteller and game-master. I am playing Frosthaven and we are returning for a new session. We need a recap of our story so far based on the scenarios we have completed.\n\nHere is the raw text from the scenarios and sections we have completed. NOTE: The text contains narrative story elements but may also contain residual game mechanics (like trap effects, scenario setup, etc).\n\nYOUR GOAL:\nStrictly ignore any leftover game mechanics. Focus ONLY on the narrative. Summarize the events that occurred: the encounters we faced, the lore we uncovered, character dialogue, and the outcomes. Output a clear, engaging recap (1-2 paragraphs per scenario) so our group remembers what has recently happened in our campaign's story.\n\n---\n\n";
+
+            let notFound = [];
+
+            ids.forEach(id => {
+                if (db.scenarios[id]) {
+                    prompt += `=== SCENARIO ${id} ===\n`;
+                    prompt += db.scenarios[id].text + "\n\n";
+
+                    const links = db.scenarios[id].links || [];
+                    links.forEach(link => {
+                        // Look up exact section IDs like "140.2" since we now parse sub-sections perfectly
+                        if (db.sections[link]) {
+                            prompt += `--- LINKED SECTION ${link} ---\n`;
+                            prompt += db.sections[link].text + "\n\n";
+                        }
+                    });
+                } else {
+                    notFound.push(id);
+                }
+            });
+
+            prompt += "---\n\nPlease read through the above text and synthesize the narrative recap.";
+
+            if (notFound.length > 0) {
+                showError(`Warning: Could not find data for scenarios: ${notFound.join(', ')}`);
+            }
+
+            const outputEl = document.getElementById('prompt-output');
+            outputEl.value = prompt;
+            document.getElementById('output-group').classList.add('visible');
+        });
+
+        document.getElementById('synthesize-btn').addEventListener('click', async () => {
+            const apiKey = document.getElementById('api-key').value.trim();
+            if (!apiKey) {
+                showError("Please enter your Gemini API Key at the top of the page.");
+                return;
+            }
+
+            const prompt = document.getElementById('prompt-output').value;
+            if (!prompt) return;
+
+            document.getElementById('story-group').classList.add('visible');
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('story-output').innerText = '';
+            document.getElementById('audio-player').style.display = 'none';
+            document.getElementById('audio-player').src = '';
+
+            const synthesizeBtn = document.getElementById('synthesize-btn');
+            synthesizeBtn.disabled = true;
+            synthesizeBtn.innerText = "Synthesizing...";
+            synthesizeBtn.style.opacity = '0.7';
+            hideError();
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseModalities: ["TEXT", "AUDIO"],
+                            speechConfig: {
+                                voiceConfig: {
+                                    prebuiltVoiceConfig: {
+                                        voiceName: "Aoede"
+                                    }
+                                }
+                            }
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || "Failed to call Gemini API");
+                }
+
+                const data = await response.json();
+
+                let storyText = "";
+                let audioBase64 = null;
+
+                if (data.candidates && data.candidates.length > 0) {
+                    const parts = data.candidates[0].content.parts;
+                    for (const part of parts) {
+                        if (part.text) {
+                            storyText += part.text;
+                        }
+                        if (part.inlineData && part.inlineData.mimeType.startsWith('audio/')) {
+                            audioBase64 = part.inlineData.data;
+                        }
+                    }
+                }
+
+                document.getElementById('story-output').innerText = storyText.trim();
+
+                if (audioBase64) {
+                    const audioEl = document.getElementById('audio-player');
+                    audioEl.src = `data:audio/wav;base64,${audioBase64}`;
+                    audioEl.style.display = 'block';
+                    audioEl.play().catch(e => console.log('Autoplay prevented', e));
+                }
+
+            } catch (err) {
+                console.error(err);
+                showError("Error: " + err.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                synthesizeBtn.disabled = false;
+                synthesizeBtn.innerText = "Synthesize & Narrate";
+                synthesizeBtn.style.opacity = '1';
+            }
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const outputEl = document.getElementById('prompt-output');
+            outputEl.select();
+            document.execCommand('copy');
+
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        });
+
+        function showError(msg) {
+            const errEl = document.getElementById('error-msg');
+            errEl.innerText = msg;
+            errEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error-msg').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
